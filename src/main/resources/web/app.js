@@ -1,38 +1,58 @@
 let myapp = (function() {
 
     let getValues = function() {
-
-        let pronos = document.getElementById("pronos");
-        let pronos_value = pronos.value;
-
-        let occurences = document.getElementById("occurences");
-        let occurences_value = occurences.options[occurences.selectedIndex].value;
-
-        let topXSynthese = document.getElementById("topXSynthese");
-        let topXSynthese_value = topXSynthese.options[topXSynthese.selectedIndex].value;
-
-        let nonPartants = document.getElementById("nonPartants");
-        let nonPartants_value = nonPartants.value;
+        let pronos = document.getElementById("pronos").value
+        let parsedPronos = pronos.replace(/\n/g,";");
 
         return {
-            "pronos" : pronos_value,
-            "occurences" : occurences_value,
-            "topXSynthese" : topXSynthese_value,
-            "nonPartants" : nonPartants_value
+            "pronos" : parsedPronos,
+            "occurences" : getValueFromSelect("occurences"),
+            "topXSynthese" : getValueFromSelect("topXSynthese"),
+            "nonPartants" : document.getElementById("nonPartants").value
         }
     }
 
-    let displayResults = function(e) {
-        console.table(getValues())
+    let getValueFromSelect = function(selectId) {
+        let select = document.getElementById(selectId);
+        return select.options[select.selectedIndex].value;
+    }
+
+    let getResult = function() { return document.getElementById("result") }
+
+    let scrollTo = function(hash) {
+        location.hash = "#" + hash;
+    }
+
+    let fillResultWith = function(text) {
+        getResult().innerHTML = text
+    }
+
+    let generate = function(e) {
+        let values = getValues();
+
+        var xhr = new XMLHttpRequest();
+
+        // Setup our listener to process completed requests
+        xhr.onload = function () {
+        	if (xhr.status >= 200 && xhr.status < 300) {
+        		console.log("✅ Done!");
+        		scrollTo("result");
+        		fillResultWith(xhr.responseText)
+        	} else { console.log("😥 Oh no! : " + xhr.responseText); }
+        };
+
+        fillResultWith("Chargement...");
+
+        xhr.open('POST', `/api/generate?pronos=${values.pronos}&occurences=${values.occurences}&topXSynthese=${values.topXSynthese}&nonPartants=${values.nonPartants}`);
+        xhr.send();
+
         e.preventDefault()
     }
 
     document.addEventListener("DOMContentLoaded", function(event) {
         let generateButton = document.getElementById('generate');
-        generateButton.onclick = displayResults;
-
+        generateButton.onclick = generate;
     });
-
 
 })()
 
