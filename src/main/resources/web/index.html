@@ -7,45 +7,56 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Turfu</title>
     <link rel="stylesheet" type="text/css" href="./milligram.css">
+    <script type="text/javascript" src="app.js"></script>
+
+    <style type="text/css" media="screen">
+        #logo { margin-left: 0.2em; }
+
+        #pronos {
+            height: 250px;
+            font-size: 1.2em;
+            font-family: monospace;
+        }
+    </style>
 </head>
 <body>
-<h1>🏇</h1>
+<h1 id="logo">🏇</h1>
 <form>
     <fieldset>
         <label>Pronostics
-            <textarea></textarea>
+            <textarea id="pronos"></textarea>
         </label>
         <div class="row">
             <div class="column">
                 <label>Occurences max
-                    <select>
-                        <option>1</option>
-                        <option selected>2</option>
-                        <option>3</option>
+                    <select id="occurences" name="occurences">
+                        <option value="1">1</option>
+                        <option value="2" selected>2</option>
+                        <option value="3">3</option>
                     </select>
                 </label>
             </div>
             <div class="column">
                 <label>Max 1 parmi top x synthèse
-                    <select>
-                        <option>1</option>
-                        <option>2</option>
-                        <option>3</option>
-                        <option>4</option>
-                        <option selected>5</option>
-                        <option>6</option>
+                    <select id="topXSynthese" name="topXSynthese">
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="'1'">4</option>
+                        <option value="5" selected>5</option>
+                        <option value="6">6</option>
                     </select>
                 </label>
             </div>
             <div class="column">
-            <label>Non partants
-                <input type="text"/>
-            </label>
-        </div>
+                <label>Non partant(s)
+                    <input type="text" id="nonPartants" name="nonPartants"/>
+                </label>
+            </div>
         </div>
 
+        <button id="generate">Générer</button>
 
-        <button>Générer</button>
     </fieldset>
 </form>
 </body>
