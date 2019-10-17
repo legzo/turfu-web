@@ -3,3 +3,9 @@
 *.iml
 build/
 .DS_Store
+/.gradle
+/.idea
+/out
+*.ipr
+*.iws
+
