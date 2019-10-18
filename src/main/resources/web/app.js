@@ -22,8 +22,6 @@
     function getPronosField() { return document.getElementById('pronos') }
     function getResultTextarea() { return document.getElementById("result") }
 
-    function scrollTo(hash) { location.hash = "#" + hash }
-
     function fillResultWith(text) { getResultTextarea().innerHTML = text }
 
     let generate = function(e) {
@@ -35,7 +33,7 @@
         xhr.onload = function () {
             if (xhr.status >= 200 && xhr.status < 300) {
                 console.log("✅ Done!");
-                scrollTo("result");
+                getResultTextarea().scrollIntoView();
                 fillResultWith(xhr.responseText)
             } else { console.log("😥 Oh no! : " + xhr.responseText); }
         };
