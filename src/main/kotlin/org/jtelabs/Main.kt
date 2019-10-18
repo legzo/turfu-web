@@ -26,7 +26,7 @@ private fun simulate(
     logger.info("Chargement des pronostics : \n${pronostics.prettyPrint()}")
 
     val synthese = pronostics.toSynthese()
-    logger.info("\norg.jtelabs.Synthese : \n${synthese.lignes.prettyPrint()}\n")
+    logger.info("\nSynthese : \n${synthese.lignes.prettyPrint()}\n")
 
     val allCombinaisons = pronostics.flatMap {
         val combinaisons = it.toCombinaisons()

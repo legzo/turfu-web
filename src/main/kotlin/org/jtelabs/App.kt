@@ -1,7 +1,5 @@
 package org.jtelabs
 
-import org.http4k.core.Method
-import org.http4k.core.Method.GET
 import org.http4k.core.Method.POST
 import org.http4k.core.Request
 import org.http4k.core.Response
@@ -24,19 +22,48 @@ fun main(args: Array<String>) {
         "/api" bind routes(
             "generate" bind POST to { request: Request ->
 
-                val pronos = request.query("pronos")
-                val occurences = request.query("occurences")
-                val topXSynthese = request.query("topXSynthese")
-                val nonPartants = request.query("nonPartants")
+                val pronos = request.query("pronos").orEmpty()
+                val occurences = request.query("occurences").orEmpty()
+                val topXSynthese = request.query("topXSynthese").orEmpty()
+                val nonPartants = request.query("nonPartants").orEmpty()
 
                 val message = "pronos: $pronos, occurences: $occurences, " +
-                    "topXSynthese: $topXSynthese, nonPartants: $nonPartants"
+                        "topXSynthese: $topXSynthese, nonPartants: $nonPartants"
 
                 logger.info(message)
 
-                val parsedPronos = StringLoader(pronos.orEmpty()).getPronostics()
+                val pronostics = StringLoader(pronos).getPronostics()
+                val synthese = pronostics.toSynthese()
 
-                Response(OK).body(parsedPronos.prettyPrint())
+                val allCombinaisons = pronostics.flatMap { it.toCombinaisons() }
+
+                val combinationsFilteredByPopularity = allCombinaisons.limitOccurencesTo(occurences.toInt())
+
+                val combinationsFilteredByPopularityAndSynthese =
+                    combinationsFilteredByPopularity.filterWithTopPlaceFromSynthese(topXSynthese.toInt(), synthese)
+
+                val nonPartantsAsList = nonPartants.parseAsList()
+
+                val combinaisonsFinales =
+                    combinationsFilteredByPopularityAndSynthese.excludeNonPartants(nonPartantsAsList)
+
+                val logs = """${pronostics.prettyPrint()}
+                    |
+                    |Synthèse :
+                    |${synthese.lignes.prettyPrint()}
+                    |
+                    |${allCombinaisons.size} combinaisons en tout
+                    |▽
+                    |${combinationsFilteredByPopularity.size} combinaisons données au plus $occurences fois
+                    |▽
+                    |${combinationsFilteredByPopularityAndSynthese.size} combinaisons après filtre par la synthèse (max 1 dans top $topXSynthese)
+                    |▽
+                    |${combinaisonsFinales.size} combinaisons après exclusion des non partants ($nonPartantsAsList)
+                    |
+                    |✨ Combinaisons finales: 
+                    |${combinaisonsFinales.prettyPrint()}
+                """.trimMargin()
+                Response(OK).body(logs)
             }
         ),
         "/" bind static(Classpath("/web"))
@@ -45,3 +72,5 @@ fun main(args: Array<String>) {
 
     app.asServer(Jetty(port)).start().block()
 }
+
+private fun String.parseAsList() = if (!isBlank()) trim().split(' ').map { it.toInt() } else listOf()

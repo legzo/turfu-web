@@ -10,9 +10,16 @@ class Loader(private val filePath: String) {
 }
 
 fun List<String>.parseLines() =
-    this.map { line ->
-        val tokens = line.split(' ')
-        Pronostic(tokens[0], tokens.drop(1).map { it.toInt() })
+    this.mapNotNull { line ->
+        try {
+            val trimed = line.trim()
+
+            if (trimed.isNotBlank()) {
+                val tokens = trimed.split(' ', '\t')
+                Pronostic(tokens[0], tokens.drop(1).map { it.toInt() })
+            } else null
+
+        } catch (t: Throwable) { null }
     }
 
 class StringLoader(private val content: String) {
