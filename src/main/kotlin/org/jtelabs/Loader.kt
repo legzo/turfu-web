@@ -22,8 +22,13 @@ fun List<String>.parseLines() =
         } catch (t: Throwable) { null }
     }
 
-class StringLoader(private val content: String) {
-    fun getPronostics() = content
-        .split(';')
-        .parseLines()
+class StringLoader(private val content: String?) {
+
+    fun getPronostics(): List<Pronostic> {
+        if (content == null) return listOf()
+
+        return content
+            .split(';')
+            .parseLines()
+    }
 }

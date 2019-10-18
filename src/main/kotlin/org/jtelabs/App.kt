@@ -35,7 +35,13 @@ fun main(args: Array<String>) {
                 val pronostics = StringLoader(pronos).getPronostics()
                 val synthese = pronostics.toSynthese()
 
-                val allCombinaisons = pronostics.flatMap { it.toCombinaisons() }
+                val allCombinaisons = pronostics.flatMap {
+                    val combinaisons = it.toCombinaisons()
+                    if (combinaisons.any { combi -> combi.chevaux.size != 4 }) {
+                        logger.warn("Attention doublon potentiel pour le prono : $it")
+                    }
+                    combinaisons
+                }
 
                 val combinationsFilteredByPopularity = allCombinaisons.limitOccurencesTo(occurences.toInt())
 
