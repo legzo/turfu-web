@@ -33,8 +33,8 @@
         xhr.onload = function () {
             if (xhr.status >= 200 && xhr.status < 300) {
                 console.log("✅ Done!");
-                getResultTextarea().scrollIntoView();
-                fillResultWith(xhr.responseText)
+                fillResultWith(xhr.responseText);
+                getResultTextarea().scrollIntoView({behavior: 'smooth'});
             } else { console.log("😥 Oh no! : " + xhr.responseText); }
         };
 
