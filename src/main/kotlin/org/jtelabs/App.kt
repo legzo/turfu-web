@@ -28,7 +28,7 @@ fun main(args: Array<String>) {
                 val nonPartants = request.query("nonPartants").orEmpty()
 
                 val message = "pronos: $pronos, occurences: $occurences, " +
-                        "topXSynthese: $topXSynthese, nonPartants: $nonPartants"
+                    "topXSynthese: $topXSynthese, nonPartants: $nonPartants"
 
                 logger.info(message)
 
@@ -45,15 +45,16 @@ fun main(args: Array<String>) {
 
                 class FilterResult(val combinaisons: List<Combinaison>, val logLines: List<String> = listOf())
 
-                val combinaisonsFinalesResult = listOf(
-                    FiltreDeFrequence(occurences.toInt()),
-                    FiltreTopSynthese(topXSynthese.toInt(), synthese),
-                    FiltreNonPartants(nonPartants.parseAsList())
-                ).fold(FilterResult(allCombinaisons)) { acc, current ->
-                    val filteredCombinaisons = current.filter(acc.combinaisons)
-                    val logLine = "Application du filtre ${current.name} -> ${acc.combinaisons.size} combinaisons"
-                    FilterResult(filteredCombinaisons, acc.logLines + logLine)
-                }
+                val combinaisonsFinalesResult =
+                    listOf(
+                        FiltreDeFrequence(occurences.toInt()),
+                        FiltreTopSynthese(topXSynthese.toInt(), synthese),
+                        FiltreNonPartants(nonPartants.parseAsList())
+                    ).fold(initial = FilterResult(allCombinaisons)) { acc, current ->
+                        val filteredCombinaisons = current.filter(acc.combinaisons)
+                        val logLine = "Application du filtre ${current.name} -> ${acc.combinaisons.size} combinaisons"
+                        FilterResult(filteredCombinaisons, acc.logLines + logLine)
+                    }
 
                 val combinaisonsFinales = combinaisonsFinalesResult.combinaisons
 
