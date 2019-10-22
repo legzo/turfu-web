@@ -43,15 +43,19 @@ fun main(args: Array<String>) {
                     combinaisons
                 }
 
-                val combinationsFilteredByPopularity = allCombinaisons.limitOccurencesTo(occurences.toInt())
+                class FilterResult(val combinaisons: List<Combinaison>, val logLines: List<String> = listOf())
 
-                val combinationsFilteredByPopularityAndSynthese =
-                    combinationsFilteredByPopularity.filterWithTopPlaceFromSynthese(topXSynthese.toInt(), synthese)
+                val combinaisonsFinalesResult = listOf(
+                    FiltreDeFrequence(occurences.toInt()),
+                    FiltreTopSynthese(topXSynthese.toInt(), synthese),
+                    FiltreNonPartants(nonPartants.parseAsList())
+                ).fold(FilterResult(allCombinaisons)) { acc, current ->
+                    val filteredCombinaisons = current.filter(acc.combinaisons)
+                    val logLine = "Application du filtre ${current.name} -> ${acc.combinaisons.size} combinaisons"
+                    FilterResult(filteredCombinaisons, acc.logLines + logLine)
+                }
 
-                val nonPartantsAsList = nonPartants.parseAsList()
-
-                val combinaisonsFinales =
-                    combinationsFilteredByPopularityAndSynthese.excludeNonPartants(nonPartantsAsList)
+                val combinaisonsFinales = combinaisonsFinalesResult.combinaisons
 
                 val logs = """${pronostics.prettyPrint()}
                     |
@@ -60,13 +64,9 @@ fun main(args: Array<String>) {
                     |
                     |${allCombinaisons.size} combinaisons en tout
                     |▽
-                    |${combinationsFilteredByPopularity.size} combinaisons données au plus $occurences fois
-                    |▽
-                    |${combinationsFilteredByPopularityAndSynthese.size} combinaisons après filtre par la synthèse (max 1 dans top $topXSynthese)
-                    |▽
-                    |${combinaisonsFinales.size} combinaisons après exclusion des non partants ($nonPartantsAsList)
+                    |${combinaisonsFinalesResult.logLines.prettyPrintForFilters()}
                     |
-                    |✨ Combinaisons finales: 
+                    |✨ Combinaisons finales:
                     |${combinaisonsFinales.prettyPrint()}
                 """.trimMargin()
                 Response(OK).body(logs)
