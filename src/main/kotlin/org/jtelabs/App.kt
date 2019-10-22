@@ -43,15 +43,16 @@ fun main(args: Array<String>) {
                     combinaisons
                 }
 
-                val combinationsFilteredByPopularity = allCombinaisons.limitOccurencesTo(occurences.toInt())
-
-                val combinationsFilteredByPopularityAndSynthese =
-                    combinationsFilteredByPopularity.filterWithTopPlaceFromSynthese(topXSynthese.toInt(), synthese)
-
                 val nonPartantsAsList = nonPartants.parseAsList()
+                val limitOccurences = limitOccurencesTo(occurences.toInt())
+                val filterWithTopPlace = filterWithTopPlaceFromSynthese(topXSynthese.toInt(), synthese)
+                val excludeNonPartants = excludeNonPartants(nonPartantsAsList)
 
-                val combinaisonsFinales =
-                    combinationsFilteredByPopularityAndSynthese.excludeNonPartants(nonPartantsAsList)
+                val combinationsFilteredByPopularity = allCombinaisons.limitOccurences()
+
+                val combinationsFilteredByPopularityAndSynthese = combinationsFilteredByPopularity.filterWithTopPlace()
+
+                val combinaisonsFinales = combinationsFilteredByPopularityAndSynthese.excludeNonPartants()
 
                 val logs = """${pronostics.prettyPrint()}
                     |
@@ -66,7 +67,7 @@ fun main(args: Array<String>) {
                     |▽
                     |${combinaisonsFinales.size} combinaisons après exclusion des non partants ($nonPartantsAsList)
                     |
-                    |✨ Combinaisons finales: 
+                    |✨ Combinaisons finales:
                     |${combinaisonsFinales.prettyPrint()}
                 """.trimMargin()
                 Response(OK).body(logs)
