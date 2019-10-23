@@ -48,12 +48,14 @@ private fun simulate(
     logger.info("${allCombinaisons.size} combinaisons en tout")
 
     val combinaisonsFinales = listOf(
-        FiltreDeFrequence(occurences),
+        ExcludeMaxOccurence(occurences),
         FiltreTopSynthese(topPlaceSynthese, synthese),
-        FiltreNonPartants(nonPartants)
+        ExcludeNonPartants(nonPartants),
+        ExcludeTousSimilaires(),
+        FiltreUnParmi(listOf(9, 1))
     ).fold(allCombinaisons) { acc, filter ->
         val result = filter.filter(acc)
-        logger.info("Application du filtre ${filter.name} >> ${acc.size} combinaisons")
+        logger.info("Application du ${filter.name} >> ${result.size} combinaisons")
         result
     }
 

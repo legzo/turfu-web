@@ -8,7 +8,8 @@
             "pronos" : parsedPronos,
             "occurences" : getValueFromSelect("occurences"),
             "topXSynthese" : getValueFromSelect("topXSynthese"),
-            "nonPartants" : document.getElementById("nonPartants").value
+            "nonPartants" : document.getElementById("nonPartants").value,
+            "chevauxSpecifies" : document.getElementById("chevauxSpecifies").value
         }
     };
 
@@ -40,7 +41,7 @@
 
         fillResultWith("Chargement...");
 
-        xhr.open('POST', `/api/generate?pronos=${values.pronos}&occurences=${values.occurences}&topXSynthese=${values.topXSynthese}&nonPartants=${values.nonPartants}`);
+        xhr.open('POST', `/api/generate?pronos=${values.pronos}&occurences=${values.occurences}&topXSynthese=${values.topXSynthese}&nonPartants=${values.nonPartants}&chevauxSpecifies=${values.chevauxSpecifies}`);
         xhr.send();
 
         e.preventDefault()

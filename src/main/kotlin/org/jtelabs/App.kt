@@ -26,11 +26,7 @@ fun main(args: Array<String>) {
                 val occurences = request.query("occurences").orEmpty()
                 val topXSynthese = request.query("topXSynthese").orEmpty()
                 val nonPartants = request.query("nonPartants").orEmpty()
-
-                val message = "pronos: $pronos, occurences: $occurences, " +
-                    "topXSynthese: $topXSynthese, nonPartants: $nonPartants"
-
-                logger.info(message)
+                val chevauxSpecifies = request.query("chevauxSpecifies").orEmpty()
 
                 val pronostics = StringLoader(pronos).getPronostics()
                 val synthese = pronostics.toSynthese()
@@ -47,12 +43,14 @@ fun main(args: Array<String>) {
 
                 val combinaisonsFinalesResult =
                     listOf(
-                        FiltreDeFrequence(occurences.toInt()),
+                        ExcludeMaxOccurence(occurences.toInt()),
                         FiltreTopSynthese(topXSynthese.toInt(), synthese),
-                        FiltreNonPartants(nonPartants.parseAsList())
+                        ExcludeNonPartants(nonPartants.parseAsList()),
+                        ExcludeTousSimilaires(),
+                        FiltreUnParmi(chevauxSpecifies.parseAsList())
                     ).fold(initial = FilterResult(allCombinaisons)) { acc, current ->
                         val filteredCombinaisons = current.filter(acc.combinaisons)
-                        val logLine = "Application du filtre ${current.name} -> ${acc.combinaisons.size} combinaisons"
+                        val logLine = "Application du ${current.name} -> ${filteredCombinaisons.size} combinaisons"
                         FilterResult(filteredCombinaisons, acc.logLines + logLine)
                     }
 
@@ -80,4 +78,4 @@ fun main(args: Array<String>) {
     app.asServer(Jetty(port)).start().block()
 }
 
-private fun String.parseAsList() = if (!isBlank()) trim().split(' ').map { it.toInt() } else listOf()
+private fun String.parseAsList() = if (!isBlank()) trim().split(" ", ", ").map { it.toInt() } else listOf()
