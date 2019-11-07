@@ -5,16 +5,16 @@ interface FiltreCombinaisons {
     val name: String
 }
 
-class ExcludeMaxOccurence(private val maxOccurences: Int) : FiltreCombinaisons {
+class FiltreOccurences(private val occurences: Int) : FiltreCombinaisons {
 
     override fun filter(input: List<Combinaison>) =
         input.groupBy { it }
-            .map { (combinaison, combinaisons) -> combinaison to combinaisons.count() }
-            .filter { (_, count) -> count <= maxOccurences }
-            .map { (combinaison, _) -> combinaison }
+            .mapValues { (_, combinaisons) -> combinaisons.count() }
+            .filter { (_, count) -> count == occurences }
+            .keys.toList()
 
     override val name: String
-        get() = "Filtre de frequence (max ${maxOccurences}occurences)"
+        get() = "Filtre de frequence ($occurences occurences)"
 }
 
 class FiltreTopSynthese(private val numberOfPlaces: Int, private val synthese: Synthese) : FiltreCombinaisons {

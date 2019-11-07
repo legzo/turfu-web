@@ -48,7 +48,7 @@ private fun simulate(
     logger.info("${allCombinaisons.size} combinaisons en tout")
 
     val combinaisonsFinales = listOf(
-        ExcludeMaxOccurence(occurences),
+        FiltreOccurences(occurences),
         FiltreTopSynthese(topPlaceSynthese, synthese),
         ExcludeNonPartants(nonPartants),
         ExcludeTousSimilaires(),

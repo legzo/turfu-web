@@ -43,7 +43,7 @@ fun main(args: Array<String>) {
 
                 val combinaisonsFinalesResult =
                     listOf(
-                        ExcludeMaxOccurence(occurences.toInt()),
+                        FiltreOccurences(occurences.toInt()),
                         FiltreTopSynthese(topXSynthese.toInt(), synthese),
                         ExcludeNonPartants(nonPartants.parseAsList()),
                         ExcludeTousSimilaires(),
