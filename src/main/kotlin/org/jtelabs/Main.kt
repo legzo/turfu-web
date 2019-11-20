@@ -51,7 +51,7 @@ private fun simulate(
         FiltreOccurences(occurences),
         FiltreTopSynthese(topPlaceSynthese, synthese),
         ExcludeNonPartants(nonPartants),
-        ExcludeTousSimilaires(),
+        // ExcludeTousSimilaires(),
         FiltreUnParmi(listOf(9, 1))
     ).fold(allCombinaisons) { acc, filter ->
         val result = filter.filter(acc)

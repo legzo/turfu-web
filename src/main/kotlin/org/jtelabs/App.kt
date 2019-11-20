@@ -46,7 +46,7 @@ fun main(args: Array<String>) {
                         FiltreOccurences(occurences.toInt()),
                         FiltreTopSynthese(topXSynthese.toInt(), synthese),
                         ExcludeNonPartants(nonPartants.parseAsList()),
-                        ExcludeTousSimilaires(),
+                        // ExcludeTousSimilaires(),
                         FiltreUnParmi(chevauxSpecifies.parseAsList())
                     ).fold(initial = FilterResult(allCombinaisons)) { acc, current ->
                         val filteredCombinaisons = current.filter(acc.combinaisons)
